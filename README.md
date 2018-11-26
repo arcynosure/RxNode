@@ -87,9 +87,9 @@ sudo npm rebuild
 
 ## System Requirements 
 
-Processor : 6 core 12 thread CPU
-Ram : 16 Gb
-HDD : 50 Gb
+* Processor : 6 core 12 thread CPU
+* Ram : 16 Gb
+* HDD : 50 Gb
 
 ## Start Network
 
