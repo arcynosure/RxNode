@@ -77,8 +77,19 @@ Download NodeJs : https://nodejs.org/en/blog/release/v8.10.0/
 
 Ensure dependencies by running
 ```
-npm install
+sudo npm install
 ```
+If error occurs please run
+
+```
+sudo npm rebuild
+```
+
+## System Requirements 
+
+Processor : 6 core 12 thread CPU
+Ram : 16 Gb
+HDD : 50 Gb
 
 ## Start Network
 
