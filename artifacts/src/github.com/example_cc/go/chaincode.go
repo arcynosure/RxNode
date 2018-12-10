@@ -28,11 +28,25 @@ type Doctor struct {
 	Hospital       string `json:"hospital"`
 }
 
-type Patient struct {
+type PatientPrivate struct {
 	PatientID  string `json:"patientid"`
 	Name       string `json:"name"`
 	Dob        string `json:"dob"`
 	Bloodgroup string `json:"bloodgroup"`
+	Address    string `json:"address"`
+}
+
+type Medication struct {
+	MedName  string `json:"medname"`
+	Compound string `json:"compound"`
+	Dosage   string `json:"dosage"`
+	Quantity string `json:"quantity"`
+}
+
+type Patient struct {
+	PatientID   string `json:"patientid"`
+	Medications []Medication
+	Pin         string `json:"pin"`
 }
 
 type Pharmacy struct {
@@ -69,9 +83,9 @@ func (t *rxMedChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 		i = i + 1
 	}
 
-	patients := []Patient{
-		Patient{PatientID: "PAT1", Name: "Mahesh", Dob: "11/2/1990", Bloodgroup: "O+"},
-		Patient{PatientID: "PAT2", Name: "Maheshwe", Dob: "11/2/1996", Bloodgroup: "B+"},
+	patients := []PatientPrivate{
+		PatientPrivate{PatientID: "PAT1", Name: "Mahesh", Dob: "11/2/1990", Bloodgroup: "O+", Address: "ccccc"},
+		PatientPrivate{PatientID: "PAT2", Name: "Maheshwe", Dob: "11/2/1996", Bloodgroup: "B+", Address: "ccc2222c"},
 	}
 
 	j := 0
@@ -81,6 +95,23 @@ func (t *rxMedChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 		stub.PutState("PAT"+strconv.Itoa(j), patientAsBytes)
 		fmt.Println("Added", patients[j])
 		j = j + 1
+	}
+	Medic := []Medication{
+		Medication{MedName: "ccc", Compound: "xxxxx", Dosage: "vvvv", Quantity: "bbbbb"},
+		Medication{MedName: "cc1", Compound: "xx1", Dosage: "vv1", Quantity: "bb1"},
+	}
+
+	patients1 := []Patient{
+		Patient{PatientID: "PAT1", Medications: Medic, Pin: "686101"},
+	}
+
+	l := 0
+	for l < len(patients1) {
+		fmt.Println("l is ", l)
+		patientAsBytes, _ := json.Marshal(patients1[l])
+		stub.PutState("PRESC"+strconv.Itoa(l), patientAsBytes)
+		fmt.Println("Added", patients1[l])
+		l = l + 1
 	}
 
 	pharmacies := []Pharmacy{
@@ -127,8 +158,12 @@ func (t *rxMedChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.createDoctor(stub, args)
 	}
 
+	if function == "createPatientPrivate" {
+		return t.createPatientPrivate(stub, args)
+	}
+
 	if function == "createPatient" {
-		return t.createDoctor(stub, args)
+		return t.createPatient(stub, args)
 	}
 
 	if function == "createPharmacy" {
@@ -318,13 +353,13 @@ func (t *rxMedChaincode) createDoctor(stub shim.ChaincodeStubInterface, args []s
 	return shim.Success(docAsBytes)
 }
 
-func (t *rxMedChaincode) createPatient(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *rxMedChaincode) createPatientPrivate(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
-	if len(args) != 5 {
-		return shim.Error("Incorrect number of arguments. Expecting 5 arguments for the invoke")
+	if len(args) != 6 {
+		return shim.Error("Incorrect number of arguments. Expecting 6 arguments for the invoke")
 	}
 
-	var patient = Patient{PatientID: args[1], Name: args[2], Dob: args[3], Bloodgroup: args[4]}
+	var patient = Patient{PatientID: args[1], Name: args[2], Dob: args[3], Bloodgroup: args[4], Address: args[5]}
 	patAsBytes, _ := json.Marshal(patient)
 	stub.PutState(args[0], patAsBytes)
 
@@ -332,6 +367,27 @@ func (t *rxMedChaincode) createPatient(stub shim.ChaincodeStubInterface, args []
 
 	// Transaction Response
 	return shim.Success(patAsBytes)
+}
+
+func (t *rxMedChaincode) createPatient(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+
+	if len(args) != 3 {
+		return shim.Error("Incorrect number of arguments. Expecting 3 arguments for the invoke")
+	}
+
+	Medic := []Medication{
+		Medication{MedName: "ccc", Compound: "xxxxx", Dosage: "vvvv", Quantity: "bbbbb"},
+		Medication{MedName: "cc1", Compound: "xx1", Dosage: "vv1", Quantity: "bb1"},
+	}
+	var patient = Patient{PatientID: args[1], Medications: Medic, Pin: args[2]}
+	patAsBytes, _ := json.Marshal(patient)
+	stub.PutState(args[0], patAsBytes)
+
+	logger.Info("Create Patient Response:%s\n", string(patAsBytes))
+
+	// Transaction Response
+	return shim.Success(patAsBytes)
+
 }
 
 func (t *rxMedChaincode) createPharmacy(stub shim.ChaincodeStubInterface, args []string) pb.Response {
