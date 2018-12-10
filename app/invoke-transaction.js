@@ -8,7 +8,7 @@ var util = require('util');
 var helper = require('./helper.js');
 var logger = helper.getLogger('invoke-chaincode');
 
-var invokeChaincode = async function(peerNames, channelName, chaincodeName, fcn, args, username, org_name) {
+var invokeChaincode = async function(peerNames, channelName, chaincodeName, fcn, args, medic, username, org_name) {
 	logger.debug(util.format('\n============ invoke transaction on channel %s ============\n', channelName));
 	var error_message = null;
 	var tx_id_string = null;
@@ -25,9 +25,22 @@ var invokeChaincode = async function(peerNames, channelName, chaincodeName, fcn,
 		var tx_id = client.newTransactionID();
 		// will need the transaction ID string for the event registration later
 		tx_id_string = tx_id.getTransactionID();
-
-		// send proposal to endorser
-		var request = {
+		let request={};
+		if(medic){
+			// send proposal to endorser
+		request = {
+			targets: peerNames,
+			chaincodeId: chaincodeName,
+			fcn: fcn,
+			args: args,
+			medic: medic,
+			chainId: channelName,
+			txId: tx_id
+		};
+		}
+		else{
+			// send proposal to endorser
+		request = {
 			targets: peerNames,
 			chaincodeId: chaincodeName,
 			fcn: fcn,
@@ -35,6 +48,8 @@ var invokeChaincode = async function(peerNames, channelName, chaincodeName, fcn,
 			chainId: channelName,
 			txId: tx_id
 		};
+		}
+		
 
 		let results = await channel.sendTransactionProposal(request);
 

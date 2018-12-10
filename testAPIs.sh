@@ -294,8 +294,23 @@ TRX_ID=$(curl -s -X POST \
   -H "content-type: application/json" \
   -d '{
 	"peers": ["peer0.org1.rxmed.com","peer0.org2.rxmed.com","peer0.org3.rxmed.com"],
-	"fcn":"createPatient",
+	"fcn":"createPatientPrivate",
 	"args":["PAT4","PATID4","AAAA QQQQ", "22/34/1978", "AB+"]
+}')
+ echo "Transaction ID is $TRX_ID"
+
+ #Invoke chaincode on peers of all Orgs
+
+echo "POST invoke chaincode on peers of Org1 and Org2 and Org3"
+echo
+TRX_ID=$(curl -s -X POST \
+  http://localhost:4000/channels/rxmed/chaincodes/mycc \
+  -H "authorization: Bearer $ORG1_TOKEN" \
+  -H "content-type: application/json" \
+  -d '{
+	"peers": ["peer0.org1.rxmed.com","peer0.org2.rxmed.com","peer0.org3.rxmed.com"],
+	"fcn":"createPatient",
+	"args":["PRESC1","PATID4","686101"]
 }')
  echo "Transaction ID is $TRX_ID"
 
