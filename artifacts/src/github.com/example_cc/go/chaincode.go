@@ -359,27 +359,25 @@ func (t *rxMedChaincode) createPatientPrivate(stub shim.ChaincodeStubInterface, 
 		return shim.Error("Incorrect number of arguments. Expecting 6 arguments for the invoke")
 	}
 
-	var patient = Patient{PatientID: args[1], Name: args[2], Dob: args[3], Bloodgroup: args[4], Address: args[5]}
-	patAsBytes, _ := json.Marshal(patient)
-	stub.PutState(args[0], patAsBytes)
+	var patientPrivate = PatientPrivate{PatientID: args[1], Name: args[2], Dob: args[3], Bloodgroup: args[4], Address: args[5]}
+	patPrivateAsBytes, _ := json.Marshal(patientPrivate)
+	stub.PutState(args[0], patPrivateAsBytes)
 
-	logger.Infof("Create Patient Response:%s\n", string(patAsBytes))
+	logger.Info("Create Patient Response:%s\n", string(patPrivateAsBytes))
 
 	// Transaction Response
-	return shim.Success(patAsBytes)
+	return shim.Success(patPrivateAsBytes)
 }
 
 func (t *rxMedChaincode) createPatient(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
-	if len(args) != 3 {
-		return shim.Error("Incorrect number of arguments. Expecting 3 arguments for the invoke")
+	if len(args) != 7 {
+		return shim.Error("Incorrect number of arguments. Expecting 7 arguments for the invoke")
 	}
-
+	
 	Medic := []Medication{
-		Medication{MedName: "ccc", Compound: "xxxxx", Dosage: "vvvv", Quantity: "bbbbb"},
-		Medication{MedName: "cc1", Compound: "xx1", Dosage: "vv1", Quantity: "bb1"},
-	}
-	var patient = Patient{PatientID: args[1], Medications: Medic, Pin: args[2]}
+		Medication{MedName: args[2], Compound: args[3], Dosage: args[4], Quantity: args[5]}}
+	var patient = Patient{PatientID: args[1], Medications: Medic, Pin: args[6]}
 	patAsBytes, _ := json.Marshal(patient)
 	stub.PutState(args[0], patAsBytes)
 
@@ -387,6 +385,7 @@ func (t *rxMedChaincode) createPatient(stub shim.ChaincodeStubInterface, args []
 
 	// Transaction Response
 	return shim.Success(patAsBytes)
+	
 
 }
 
@@ -420,7 +419,6 @@ func (t *rxMedChaincode) updateDoctor(stub shim.ChaincodeStubInterface, args []s
 	/*
 		docAsBytes, _ := stub.GetState(args[0])
 		doctor := Doctor{}
-
 		json.Unmarshal(docAsBytes, &doctor)
 		doctor.Hospital = args[4]
 	*/
@@ -443,12 +441,11 @@ func (t *rxMedChaincode) updatePatient(stub shim.ChaincodeStubInterface, args []
 
 	patAsBytes, _ := stub.GetState(args[0])
 	/* If want to update all fields */
-	patient := Patient{PatientID: args[1], Name: args[2], Dob: args[3], Bloodgroup: args[4]}
+	patient := PatientPrivate{PatientID: args[1], Name: args[2], Dob: args[3], Bloodgroup: args[4], Address: args[5]}
 	/* if want to update a single field */
 	/*
 		patAsBytes, _ := stub.GetState(args[0])
 		patient := Patient{}
-
 		json.Unmarshal(patAsBytes, &patient)
 		patient.Hospital = args[4]
 	*/
@@ -476,7 +473,6 @@ func (t *rxMedChaincode) updatePharmacy(stub shim.ChaincodeStubInterface, args [
 	/*
 		pharmAsBytes, _ := stub.GetState(args[0])
 		pharmacy := Pharmacy{}
-
 		json.Unmarshal(pharmAsBytes, &pharmacy)
 		pharmacy.Hospital = args[4]
 	*/

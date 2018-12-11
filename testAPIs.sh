@@ -284,6 +284,8 @@ TRX_ID=$(curl -s -X POST \
 }')
  echo "Transaction ID is $TRX_ID"
 
+
+
  #Invoke chaincode on peers of all Orgs
 
 echo "POST invoke chaincode on peers of Org1 and Org2 and Org3"
@@ -295,16 +297,11 @@ TRX_ID=$(curl -s -X POST \
   -d '{
 	"peers": ["peer0.org1.rxmed.com","peer0.org2.rxmed.com","peer0.org3.rxmed.com"],
 	"fcn":"createPatientPrivate",
-	"args":["PAT4","PATID4","AAAA QQQQ", "22/34/1978", "AB+"]
+	"args":["PAT4","PATID4","AAAA QQQQ", "22/34/1978", "AB+","cccccc111"]
 }')
  echo "Transaction ID is $TRX_ID"
 
-#Query Chaincode on peer0 of Org 1 for Query DOC1
-
-echo
-
 #Invoke chaincode on peers of all Orgs
-
 echo "POST invoke chaincode on peers of Org1 and Org2 and Org3"
 echo
 TRX_ID=$(curl -s -X POST \
@@ -314,14 +311,13 @@ TRX_ID=$(curl -s -X POST \
   -d '{
 	"peers": ["peer0.org1.rxmed.com","peer0.org2.rxmed.com","peer0.org3.rxmed.com"],
 	"fcn":"createPatient",
-	"args":["PRESC1","PATID4","686101"]
+	"args":["PRESC1","PAT1","xXx","comp","dos","qty", "68101"]
 }')
  echo "Transaction ID is $TRX_ID"
 
 #Query Chaincode on peer0 of Org 1 for Query DOC1
 
 echo
-
 echo
 echo "GET query chaincode on peer0 of Org1 for Query DOC1"
 echo
