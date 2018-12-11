@@ -374,13 +374,12 @@ func (t *rxMedChaincode) createPatient(stub shim.ChaincodeStubInterface, args []
 	if len(args) != 4 {
 		return shim.Error("Incorrect number of arguments. Expecting 4 arguments for the invoke")
 	}
+	var med []Medication
 
-	Medic := []Medication{
-		Medication{MedName: "ccc", Compound: "xxxxx", Dosage: "vvvv", Quantity: "bbbbb"},
-		Medication{MedName: "cc1", Compound: "xx1", Dosage: "vv1", Quantity: "bb1"},
-	}
-	logger.Info(args[2])
-	var patient = Patient{PatientID: args[1], Medications: Medic, Pin: args[3]}
+	json.Unmarshal([]byte(args[2]), &med)
+	logger.Info(med[0].MedName)
+
+	var patient = Patient{PatientID: args[1], Medications: med, Pin: args[3]}
 	patAsBytes, _ := json.Marshal(patient)
 	stub.PutState(args[0], patAsBytes)
 
@@ -428,7 +427,7 @@ func (t *rxMedChaincode) updateDoctor(stub shim.ChaincodeStubInterface, args []s
 	docAsBytes, _ = json.Marshal(doctor)
 	stub.PutState(args[0], docAsBytes)
 
-	logger.Infof("Create Doctor Response:%s\n", string(docAsBytes))
+	logger.Info("Create Doctor Response:%s\n", string(docAsBytes))
 
 	// Transaction Response
 	return shim.Success(nil)

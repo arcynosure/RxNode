@@ -302,7 +302,7 @@ TRX_ID=$(curl -s -X POST \
  echo "Transaction ID is $TRX_ID"
 
 #Invoke chaincode on peers of all Orgs
-Medication='[{"MedName":"name", "Compound": "comp", "Dosage": "dos", "Quantity": "qty"}]'                                                                  
+Medication='[{"MedName":"name", "Compound": "comp", "Dosage": "dos", "Quantity": "qty"},{"MedName":"name1", "Compound": "comp1", "Dosage": "dos1", "Quantity": "qty1"}]'                                                                  
 echo "POST invoke chaincode on peers of Org1 and Org2 and Org3"
 echo
 TRX_ID=$(curl -s -X POST \
