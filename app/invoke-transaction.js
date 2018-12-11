@@ -25,7 +25,8 @@ var invokeChaincode = async function(peerNames, channelName, chaincodeName, fcn,
 		var tx_id = client.newTransactionID();
 		// will need the transaction ID string for the event registration later
 		tx_id_string = tx_id.getTransactionID();
-
+		args[2]=JSON.stringify(args[2]);
+		console.log(args);
 		// send proposal to endorser
 		var request = {
 			targets: peerNames,
