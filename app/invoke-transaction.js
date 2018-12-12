@@ -26,7 +26,8 @@ var invokeChaincode = async function(peerNames, channelName, chaincodeName, fcn,
 		// will need the transaction ID string for the event registration later
 		tx_id_string = tx_id.getTransactionID();
 		args[2]=JSON.stringify(args[2]);
-		console.log(args);
+		console.log(__dirname);
+		const collectionsConfigPath = __dirname+"/endorsement/collections_config.json"
 		// send proposal to endorser
 		var request = {
 			targets: peerNames,
@@ -34,7 +35,8 @@ var invokeChaincode = async function(peerNames, channelName, chaincodeName, fcn,
 			fcn: fcn,
 			args: args,
 			chainId: channelName,
-			txId: tx_id
+			txId: tx_id,
+			'collections-config': collectionsConfigPath
 		};
 
 		let results = await channel.sendTransactionProposal(request);

@@ -78,7 +78,7 @@ func (t *rxMedChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	for i < len(doctors) {
 		fmt.Println("i is ", i)
 		doctorAsBytes, _ := json.Marshal(doctors[i])
-		stub.PutState("DOC"+strconv.Itoa(i), doctorAsBytes)
+		stub.PutPrivateData("Doctor", "DOC"+strconv.Itoa(i), doctorAsBytes)
 		fmt.Println("Added", doctors[i])
 		i = i + 1
 	}
@@ -92,7 +92,7 @@ func (t *rxMedChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	for j < len(patients) {
 		fmt.Println("j is ", j)
 		patientAsBytes, _ := json.Marshal(patients[j])
-		stub.PutState("PAT"+strconv.Itoa(j), patientAsBytes)
+		stub.PutPrivateData("PatientPriavte", "PAT"+strconv.Itoa(j), patientAsBytes)
 		fmt.Println("Added", patients[j])
 		j = j + 1
 	}
@@ -109,7 +109,7 @@ func (t *rxMedChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	for l < len(patients1) {
 		fmt.Println("l is ", l)
 		patientAsBytes, _ := json.Marshal(patients1[l])
-		stub.PutState("PRESC"+strconv.Itoa(l), patientAsBytes)
+		stub.PutPrivateData("Patient", "PRESC"+strconv.Itoa(l), patientAsBytes)
 		fmt.Println("Added", patients1[l])
 		l = l + 1
 	}
@@ -122,7 +122,7 @@ func (t *rxMedChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	for k < len(pharmacies) {
 		fmt.Println("k is ", k)
 		pharmacyAsBytes, _ := json.Marshal(pharmacies[k])
-		stub.PutState("PHARM"+strconv.Itoa(k), pharmacyAsBytes)
+		stub.PutPrivateData("Pharmacy", "PHARM"+strconv.Itoa(k), pharmacyAsBytes)
 		fmt.Println("Added", pharmacies[k])
 		k = k + 1
 	}
@@ -195,10 +195,10 @@ func (t *rxMedChaincode) query(stub shim.ChaincodeStubInterface, args []string) 
 		return shim.Error("Incorrect number of arguments. Expecting name of the person to query")
 	}
 
-	A = args[0]
+	A = args[1]
 
 	// Get the state from the ledger
-	Avalbytes, err := stub.GetState(A)
+	Avalbytes, err := stub.GetPrivateData(args[0], A)
 	if err != nil {
 		jsonResp := "{\"Error\":\"Failed to get state for " + A + "\"}"
 		return shim.Error(jsonResp)
@@ -220,10 +220,10 @@ func (t *rxMedChaincode) delete(stub shim.ChaincodeStubInterface, args []string)
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
 
-	searchKey := args[0]
+	searchKey := args[1]
 
 	// Delete the key from the state in ledger
-	err := stub.DelState(searchKey)
+	err := stub.DelPrivateData(args[0], searchKey)
 	if err != nil {
 		return shim.Error("Failed to delete state")
 	}
@@ -345,7 +345,7 @@ func (t *rxMedChaincode) createDoctor(stub shim.ChaincodeStubInterface, args []s
 
 	var doctor = Doctor{DoctorID: args[1], Name: args[2], RegisterNumber: args[3], Hospital: args[4]}
 	docAsBytes, _ := json.Marshal(doctor)
-	stub.PutState(args[0], docAsBytes)
+	stub.PutPrivateData("Doctor", args[0], docAsBytes)
 
 	logger.Infof("Create Doctor Response:%s\n", string(docAsBytes))
 
@@ -361,7 +361,7 @@ func (t *rxMedChaincode) createPatientPrivate(stub shim.ChaincodeStubInterface, 
 
 	var patientPrivate = PatientPrivate{PatientID: args[1], Name: args[2], Dob: args[3], Bloodgroup: args[4], Address: args[5]}
 	patPrivateAsBytes, _ := json.Marshal(patientPrivate)
-	stub.PutState(args[0], patPrivateAsBytes)
+	stub.PutPrivateData("PatientPrivate", args[0], patPrivateAsBytes)
 
 	logger.Info("Create Patient Response:%s\n", string(patPrivateAsBytes))
 
@@ -381,7 +381,7 @@ func (t *rxMedChaincode) createPatient(stub shim.ChaincodeStubInterface, args []
 
 	var patient = Patient{PatientID: args[1], Medications: med, Pin: args[3]}
 	patAsBytes, _ := json.Marshal(patient)
-	stub.PutState(args[0], patAsBytes)
+	stub.PutPrivateData("Patient", args[0], patAsBytes)
 
 	logger.Info("Create Patient Response:%s\n", string(patAsBytes))
 
@@ -398,7 +398,7 @@ func (t *rxMedChaincode) createPharmacy(stub shim.ChaincodeStubInterface, args [
 
 	var pharmacy = Pharmacy{PharmacyID: args[1], Name: args[2], Pin: args[3], Owner: args[4]}
 	pharmAsBytes, _ := json.Marshal(pharmacy)
-	stub.PutState(args[0], pharmAsBytes)
+	stub.PutPrivateData("Pharmacy", args[0], pharmAsBytes)
 
 	logger.Infof("Create Pharmacy Response:%s\n", string(pharmAsBytes))
 
@@ -413,19 +413,19 @@ func (t *rxMedChaincode) updateDoctor(stub shim.ChaincodeStubInterface, args []s
 		return shim.Error("Incorrect number of arguments. Expecting 5 arguments for the invoke")
 	}
 
-	docAsBytes, _ := stub.GetState(args[0])
+	docAsBytes, _ := stub.GetPrivateData("Doctor", args[0])
 	/* If want to update all fields */
 	doctor := Doctor{DoctorID: args[1], Name: args[2], RegisterNumber: args[3], Hospital: args[4]}
 	/* if want to update a single field */
 	/*
-		docAsBytes, _ := stub.GetState(args[0])
+		docAsBytes, _ := stub.GetPrivateData(args[0])
 		doctor := Doctor{}
 		json.Unmarshal(docAsBytes, &doctor)
 		doctor.Hospital = args[4]
 	*/
 
 	docAsBytes, _ = json.Marshal(doctor)
-	stub.PutState(args[0], docAsBytes)
+	stub.PutPrivateData("Doctor", args[0], docAsBytes)
 
 	logger.Info("Create Doctor Response:%s\n", string(docAsBytes))
 
@@ -440,19 +440,19 @@ func (t *rxMedChaincode) updatePatient(stub shim.ChaincodeStubInterface, args []
 		return shim.Error("Incorrect number of arguments. Expecting 5 arguments for the invoke")
 	}
 
-	patAsBytes, _ := stub.GetState(args[0])
+	patAsBytes, _ := stub.GetPrivateData("PatientPrivate", args[0])
 	/* If want to update all fields */
 	patient := PatientPrivate{PatientID: args[1], Name: args[2], Dob: args[3], Bloodgroup: args[4], Address: args[5]}
 	/* if want to update a single field */
 	/*
-		patAsBytes, _ := stub.GetState(args[0])
+		patAsBytes, _ := stub.GetPrivateData(args[0])
 		patient := Patient{}
 		json.Unmarshal(patAsBytes, &patient)
 		patient.Hospital = args[4]
 	*/
 
 	patAsBytes, _ = json.Marshal(patient)
-	stub.PutState(args[0], patAsBytes)
+	stub.PutPrivateData("PatientPrivate", args[0], patAsBytes)
 
 	logger.Infof("Create Patient Response:%s\n", string(patAsBytes))
 
@@ -467,19 +467,19 @@ func (t *rxMedChaincode) updatePharmacy(stub shim.ChaincodeStubInterface, args [
 		return shim.Error("Incorrect number of arguments. Expecting 5 arguments for the invoke")
 	}
 
-	pharmAsBytes, _ := stub.GetState(args[0])
+	pharmAsBytes, _ := stub.GetPrivateData("Pharmacy", args[0])
 	/* If want to update all fields */
 	pharmacy := Pharmacy{PharmacyID: args[1], Name: args[2], Pin: args[3], Owner: args[4]}
 	/* if want to update a single field */
 	/*
-		pharmAsBytes, _ := stub.GetState(args[0])
+		pharmAsBytes, _ := stub.GetPrivateData(args[0])
 		pharmacy := Pharmacy{}
 		json.Unmarshal(pharmAsBytes, &pharmacy)
 		pharmacy.Hospital = args[4]
 	*/
 
 	pharmAsBytes, _ = json.Marshal(pharmacy)
-	stub.PutState(args[0], pharmAsBytes)
+	stub.PutPrivateData("Pharmacy", args[0], pharmAsBytes)
 
 	logger.Infof("Create Pharmacy Response:%s\n", string(pharmAsBytes))
 

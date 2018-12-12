@@ -323,7 +323,7 @@ echo
 echo "GET query chaincode on peer0 of Org1 for Query DOC1"
 echo
 curl -s -X GET \
-  "http://localhost:4000/channels/rxmed/chaincodes/mycc?peer=peer0.org1.rxmed.com&fcn=query&args=%5B%22DOC1%22%5D" \
+  "http://localhost:4000/channels/rxmed/chaincodes/mycc?peer=peer0.org1.rxmed.com&fcn=query&args=%5B%22Doctor%22%%2C%22DOC1%22%5D" \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json"
 echo
@@ -334,7 +334,7 @@ echo
 echo "GET query chaincode on peer1 of Org2 for Query DOC4"
 echo
 curl -s -X GET \
-  "http://localhost:4000/channels/rxmed/chaincodes/mycc?peer=peer1.org2.rxmed.com&fcn=query&args=%5B%22DOC4%22%5D" \
+  "http://localhost:4000/channels/rxmed/chaincodes/mycc?peer=peer1.org2.rxmed.com&fcn=query&args=%5B%22Doctor%22%%2C%22DOC4%22%5D" \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json"
 echo
@@ -345,7 +345,7 @@ echo
 echo "GET query chaincode on peer1 of Org2 for Query PAT1"
 echo
 curl -s -X GET \
-  "http://localhost:4000/channels/rxmed/chaincodes/mycc?peer=peer1.org2.rxmed.com&fcn=query&args=%5B%22PAT1%22%5D" \
+  "http://localhost:4000/channels/rxmed/chaincodes/mycc?peer=peer1.org2.rxmed.com&fcn=query&args=%5B%22PatientPrivate%22%%2C%22PAT1%22%5D" \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json"
 echo
@@ -356,7 +356,7 @@ echo
 echo "GET query chaincode on peer1 of Org3 for Query DOC4"
 echo
 curl -s -X GET \
-  "http://localhost:4000/channels/rxmed/chaincodes/mycc?peer=peer1.org3.rxmed.com&fcn=query&args=%5B%22DOC4%22%5D" \
+  "http://localhost:4000/channels/rxmed/chaincodes/mycc?peer=peer1.org3.rxmed.com&fcn=query&args=%5B%22Doctor%22%%2C%22DOC4%22%5D" \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json"
 echo
@@ -381,7 +381,7 @@ echo
 echo "GET query chaincode on peer1 of Org1 for Query History of DOC0"
 echo
 curl -s -X GET \
-  "http://localhost:4000/channels/rxmed/chaincodes/mycc?peer=peer1.org1.rxmed.com&fcn=queryHistory&args=%5B%22DOC0%22%5D" \
+  "http://localhost:4000/channels/rxmed/chaincodes/mycc?peer=peer1.org1.rxmed.com&fcn=queryHistory&args=%5B%22Doctor%22%%2C%22DOC0%22%5D" \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json"
 
@@ -398,7 +398,7 @@ TRX_ID=$(curl -s -X POST \
   -d '{
 	"peers": ["peer0.org1.rxmed.com","peer0.org2.rxmed.com"],
 	"fcn":"delete",
-	"args":["DOC2"]
+	"args":["Doctor","DOC2"]
 }')
 echo "Transaction ID is $TRX_ID"
 
@@ -408,7 +408,7 @@ echo
 echo "GET query chaincode on peer1 of Org1 for Query History of DOC2 to check status of isDelete flag"
 echo
 curl -s -X GET \
-  "http://localhost:4000/channels/rxmed/chaincodes/mycc?peer=peer1.org1.rxmed.com&fcn=queryHistory&args=%5B%22DOC2%22%5D" \
+  "http://localhost:4000/channels/rxmed/chaincodes/mycc?peer=peer1.org1.rxmed.com&fcn=queryHistory&args=%5B%22Doctor%22%%2C%22DOC2%22%5D" \
   -H "authorization: Bearer $ORG1_TOKEN" \
   -H "content-type: application/json"
 

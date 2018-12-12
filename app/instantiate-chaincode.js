@@ -28,7 +28,7 @@ var instantiateChaincode = async function(peers, channelName, chaincodeName, cha
 		var tx_id = client.newTransactionID(true); // Get an admin based transactionID
 		// will need the transaction ID string for the event registration later
 		var tx_id_string = tx_id.getTransactionID();
-
+		const collectionsConfigPath = __dirname+"/endorsement/collections_config.json"
 		// send proposal to endorser
 		var request = {
 			// targets: peers,
@@ -36,7 +36,8 @@ var instantiateChaincode = async function(peers, channelName, chaincodeName, cha
 			chaincodeType: chaincodeType,
 			chaincodeVersion: chaincodeVersion,
 			args: args,
-			txId: tx_id
+			txId: tx_id,
+			'collections-config': collectionsConfigPath
 		};
 
 		logger.debug('Transaction request: ' + JSON.stringify(request));
